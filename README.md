@@ -7,13 +7,13 @@
 <details>
   <summary style="font-size: 25px;"><b>Projetos :rocket:</b></summary>
 
-- [Nestjs + Supabase (CRUD simples)]('/user-crud')
+- [Nestjs + Supabase (CRUD simples)](user-crud)
 
 </details>
 
 # Nestjs 🐈
 
-> [Documentação](https://docs.nestjs.com/)
+> ### [Documentação](https://docs.nestjs.com/)
 
 <p align="center">
   <img src="https://github.com/PedroFnseca/nestjs-examples/assets/97262778/f15b7083-7cca-4ee5-a7f8-65e9dce373a7">
@@ -27,7 +27,7 @@
 
 # Supabase :zap:
 
-> [Site oficial](https://supabase.com/)
+> ### [Site oficial](https://supabase.com/)
 
 <p align="center">
   <img src="https://github.com/PedroFnseca/nestjs-examples/assets/97262778/b3c2faaa-b005-47d5-8c3d-60f230b03475">
