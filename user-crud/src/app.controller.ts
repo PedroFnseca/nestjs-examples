@@ -2,91 +2,69 @@ import {
   Controller,
   Get,
   Logger,
-  Post, Body,
+  Post,
+  Body,
   Delete,
   Param,
-  Response,
-  Put
+  Put,
+  HttpException,
+  HttpStatus,
 } from '@nestjs/common';
 import { AppService } from './app.service';
-import { User } from './types/user.type'
+import { User } from './types/user.type';
 
 interface UserIdParam {
-  id: number
+  id: number;
 }
 
 @Controller('users')
 export class AppController {
   private readonly logger = new Logger(AppController.name);
+
   constructor(private readonly appService: AppService) {}
 
   @Get()
-  getUsers() {
+  async getUsers() {
     this.logger.log('GET / called');
-    return this.appService.getUsers();
+    return await this.appService.getUsers();
   }
 
   @Get(':id')
-  getOneUser(
-    @Param() userId: UserIdParam,
-  ) {
-    const { id } = userId
-
-    this.logger.log(`GET /${id} called`)
-
-    return this.appService.getOneUser(id)
+  async getOneUser(@Param() { id }: UserIdParam) {
+    this.logger.log(`GET /${id} called`);
+    if (!id) {
+      throw new HttpException('No id provided', HttpStatus.BAD_REQUEST);
+    }
+    return await this.appService.getOneUser(id);
   }
 
   @Post()
-  insertUser(
-    @Body('user') dataNewuser: User,
-    @Response() res: any
-  ) {
+  async insertUser(@Body() newUser: User) {
     this.logger.log('POST / called');
-
-    if (!dataNewuser) {
-      return res.status(400).send('No user provided')
+    if (!newUser) {
+      throw new HttpException('No user provided', HttpStatus.BAD_REQUEST);
     }
-
-    this.appService.insertUser(dataNewuser);
-
-    res.status(200).send("User inserted successfully")
+    const createdUser = await this.appService.insertUser(newUser);
+    return { message: 'User inserted successfully', data: createdUser };
   }
 
   @Delete(':id')
-  deleteUser(
-    @Param() userId: UserIdParam,
-    @Response() res: any
-  ) {
-    this.logger.log('DELETE / called')
-
-    const { id } = userId
-
+  async deleteUser(@Param() { id }: UserIdParam) {
+    this.logger.log(`DELETE /${id} called`);
     if (!id) {
-      return res.status(400).send('No id provided')
+      throw new HttpException('No id provided', HttpStatus.BAD_REQUEST);
     }
-
-    this.appService.deleteUser(id)
-
-    res.status(200).send("User deleted successfully")
+    const deletedUser = await this.appService.deleteUser(id);
+    return { message: 'User deleted successfully', data: deletedUser };
   }
 
   @Put(':id')
-  updateUser(
-    @Param() userId: UserIdParam,
-    @Response() res: any,
-    @Body('user') dataNewUser: User
-  ) {
-    this.logger.log('PUT / called')
-
-    const { id } = userId
-
+  async updateUser(@Param() { id }: UserIdParam, @Body() updatedUser: Partial<User>) {
+    this.logger.log(`PUT /${id} called`);
     if (!id) {
-      return res.status(400).send('No id provided')
+      throw new HttpException('No id provided', HttpStatus.BAD_REQUEST);
     }
-
-    this.appService.updateUser(id, dataNewUser)
-
-    res.status(200).send('User updated successfully')
+    const user = await this.appService.updateUser(id, updatedUser);
+    return { message: 'User updated successfully', data: user };
   }
 }
